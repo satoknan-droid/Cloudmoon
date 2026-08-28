@@ -274,8 +274,8 @@ async function proxyCloudMoon(request) {
     });
   }
   
-  function fixButtons() {
-    var allBtns = document.querySelectorAll("button.google-button");
+function fixButtons() { 
+  var allBtns = document.querySelectorAll("button.google-button, button.apple-button");
     for (var i = 0; i < allBtns.length; i++) {
       var btn = allBtns[i];
       var styleAttr = btn.getAttribute("style") || "";
