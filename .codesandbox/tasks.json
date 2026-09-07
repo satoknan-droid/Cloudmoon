@@ -1,0 +1,15 @@
+{
+  "setupTasks": [
+    {
+      "name": "Install dependencies",
+      "command": "npm install"
+    }
+  ],
+  "tasks": [
+    {
+      "name": "Start CloudMoon",
+      "command": "npm start",
+      "runAtStart": true
+    }
+  ]
+}
