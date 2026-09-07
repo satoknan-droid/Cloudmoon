@@ -145,7 +145,10 @@ async function proxyCloudMoon(request) {
       return new Response("Invalid proxy URL", { status: 400 });
     }
   } else {
-    targetURL = "https://web.cloudmoonapp.com" + url.pathname + url.search;
+    const cloudMoonPath = url.pathname.startsWith("/cloudmoon")
+      ? url.pathname.substring("/cloudmoon".length) || "/"
+      : url.pathname;
+    targetURL = "https://web.cloudmoonapp.com" + cloudMoonPath + url.search;
   }
   if (isAdRequest(targetURL)) {
     console.log("[Ad Blocked] Blocked an add URL request for recource savings:", targetURL);
@@ -188,6 +191,11 @@ async function proxyCloudMoon(request) {
   const contentType = response.headers.get("Content-Type") || "";
   if (contentType.includes("text/html")) {
     let html = await response.text();
+    // response.text() has already decoded compressed upstream content. Remove
+    // stale encoding metadata before returning the rewritten HTML.
+    newHeaders.delete("Content-Encoding");
+    newHeaders.delete("Content-Length");
+    newHeaders.delete("Transfer-Encoding");
     html = blockAdsInHTML(html);
     const injectionCode = `
 <style id="cm-ad-blocker-css">
@@ -723,7 +731,7 @@ function getMainHTML() {
         const btnDock = document.getElementById('btn-dock');
         
         let isShowingGame = false;
-        let mainURL = '/web.cloudmoonapp.com/';
+        let mainURL = '/cloudmoon/';
         let shadowRoots = [];
         let currentIframe = null;
         
